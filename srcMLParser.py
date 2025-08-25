@@ -16,6 +16,7 @@ LANGUAGE_EXTENSION = '.py'  # adjust to your language, e.g., '.java', '.cpp'
 
 # List to record failed entries
 failed_entries = []
+parsed_files_count = 0 # Counter for parsed files
 
 for filename in os.listdir(CLEANED_DIR):
     if filename.endswith('.json'):
@@ -49,19 +50,27 @@ for filename in os.listdir(CLEANED_DIR):
                     subprocess.run(
                         ['srcml', temp_file, '-o', xml_path],
                         check=True
+                        capture_output=True
+                        text=True
                     )
                     # Save pointer to XML in JSON
                     entry['srcml_file'] = xml_path
-                except subprocess.CalledProcessError:
+                except subprocess.CalledProcessError as e:
                     entry['srcml_file'] = None
                     failed_entries.append({
                         "file": filename,
                         "entry_index": idx,
-                        "sha": sha
+                        "sha": sha,
+                        "reason": e.stderr.strip() if e.stderr else "Unknown srcML error"
                     })
 
                 updated_entries.append(entry)
                 os.remove(temp_file)
+
+        #Count this file if at least one entry succeeded
+        if any(entry['srcml_file'] for entry in updated_entries):
+            parsed_files_count += 1
+            print(f"Total parsed files so far: {parsed_files_count}")   
 
         # Write updated JSON with srcML pointers
         with open(out_path, 'w', encoding='utf-8') as out_f:
@@ -76,4 +85,5 @@ df_failed.to_csv(FAILED_CSV, index=False)
 
 print(f"\nTotal failed entries: {len(failed_entries)}")
 print(f"Failed entries recorded in {FAILED_CSV}")
+print(f"Total successfully parsed files: {parsed_files_count}") 
 
