@@ -49,8 +49,8 @@ for filename in os.listdir(CLEANED_DIR):
                 try:
                     subprocess.run(
                         ['srcml', temp_file, '-o', xml_path],
-                        check=True
-                        capture_output=True
+                        check=True,
+                        capture_output=True,
                         text=True
                     )
                     # Save pointer to XML in JSON
