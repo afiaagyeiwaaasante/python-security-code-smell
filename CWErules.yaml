@@ -1,0 +1,50 @@
+metadata:
+  id: CWE-798-Hardcoded-Credentials
+  name: Hardcoded Credentials in Python
+  description: Detects hard-coded credentials such as passwords, API keys, or tokens in assignments or function calls.
+  cwe: CWE-798
+  severity: HIGH
+  languages: [python]
+
+query:
+  # Look for variable assignments with suspicious names and string literals
+  where:
+    - assignment:
+        lhs:
+          name:
+            regex: "(?i)(password|passwd|pwd|secret|token|apikey|api_key|auth|credential|key)"
+        rhs:
+          literal:
+            kind: string
+            regex: "^[A-Za-z0-9+/=]{4,}$"
+
+  or:
+    # Function parameter defaults
+    - parameter:
+        name:
+          regex: "(?i)(password|passwd|pwd|secret|token|apikey|api_key|auth|credential|key)"
+        default:
+          literal:
+            kind: string
+
+  or:
+    # Function call arguments
+    - call:
+        argument:
+          name:
+            regex: "(?i)(password|passwd|pwd|secret|token|apikey|api_key|auth|credential|key)"
+          value:
+            literal:
+              kind: string
+
+message: |
+  Hard-coded credential detected (CWE-798). Avoid placing secrets directly in code. 
+  Use environment variables or secret managers instead.
+
+fix: |
+  Replace the hard-coded string with a secure retrieval method, e.g.:
+      os.getenv("SECRET_KEY")
+
+references:
+  - https://cwe.mitre.org/data/definitions/798.html
+  - https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/

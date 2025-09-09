@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0">
+
+<unit revision="1.0.0" language="Python" filename="HardCoded_test.py" item="1"><expr><name>db_password</name> <operator>=</operator> <literal type="string">"supersecret123"</literal></expr></unit>
+
+<unit revision="1.0.0" language="Python" filename="HardCoded_test.py" item="2"><expr><name>auth_token</name> <operator>=</operator> <literal type="string">"Bearer secret-token-999"</literal></expr></unit>
+
+<unit revision="1.0.0" language="Python" filename="HardCoded_test.py" item="3"><expr><name>secret_key</name> <operator>=</operator> <literal type="string">"hardcoded_secret_key"</literal></expr></unit>
+
+</unit>

@@ -51,7 +51,7 @@ for filename in os.listdir(CLEANED_DIR):
                         ['srcml', temp_file, '-o', xml_path],
                         check=True,
                         capture_output=True,
-                        text=True
+                        text=True. . 
                     )
                     # Save pointer to XML in JSON
                     entry['srcml_file'] = xml_path
