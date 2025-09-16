@@ -1,23 +1,29 @@
-// V0200 - CWE-200: Exposure of Sensitive Information (print)
-FIND //src:call/src:name[
-        .='print'
-     ] CONTAINS src:argument[src:name OR src:literal]
-WHERE $C CONTAINS src:argument/src:name MATCHES "password|secret|token|apikey|key"
-   OR $C CONTAINS src:argument/src:literal MATCHES "password|secret|token|apikey|key"
-RETURN $C;
+/*
+V0200 - CWE - 200: Exposure of Sensitive Information to an Unauthorized Actor.
+The application exposes sensitive information to an actor who is not explicitly 
+authorized to have access to it.
+*/
 
-// V0200 - CWE-200: Exposure of Sensitive Information (logging)
-FIND //src:call/src:name[
-        src:name[1]='logging' AND (src:name[2]='debug' OR src:name[2]='info' OR src:name[2]='warning')
-     ] CONTAINS src:argument[src:name OR src:literal]
-WHERE $C CONTAINS src:argument/src:name MATCHES "password|secret|token|apikey|key"
-   OR $C CONTAINS src:argument/src:literal MATCHES "password|secret|token|apikey|key"
-RETURN $C;
+// V0200 - Detect printing of sensitive variables
+FIND $F($V)
+WHERE MATCH($F, "print")
+  AND MATCH($V, "(?i)(password|passwd|pwd|secret|token|key|ssn|credit|card)")
 
-// V0200 - CWE-200: Exposure of Sensitive Information (HTTP responses)
-FIND //src:call/src:name[
-        .='jsonify' OR .='Response'
-     ] CONTAINS src:argument[src:name OR src:literal]
-WHERE $C CONTAINS src:argument/src:name MATCHES "password|secret|token|apikey|key"
-   OR $C CONTAINS src:argument/src:literal MATCHES "password|secret|token|apikey|key"
-RETURN $C;
+
+// V0200 - Detect logging of sensitive variables
+FIND $F($V)
+WHERE MATCH($F, "logging\\.info|logging\\.debug|logging\\.error|logger\\.info|logger\\.debug|logger\\.error")
+  AND MATCH($V, "(?i)(password|token|secret|key|ssn|credit|card)")
+
+
+// V0200 - Detect exposure in HTTP responses 
+FIND $F($V)
+WHERE MATCH($F, "return|Response")
+  AND MATCH($V, "(?i)(password|token|secret|key|ssn|credit|card)")
+
+
+//V0200 - Detect writing sensitive variables to files
+FIND $F($V)
+WHERE MATCH($F, "open|write|writelines")
+  AND MATCH($V, "(?i)(password|token|secret|key|ssn|credit|card)")
+
