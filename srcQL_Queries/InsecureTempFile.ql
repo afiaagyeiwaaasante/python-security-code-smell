@@ -9,7 +9,6 @@ unauthorized user.
 FIND $F($A)
 WHERE MATCH($F, "tempfile\\.mktemp")
 
-
 // V0377 - Detect direct creation of files under /tmp
 FIND $F($A)
 WHERE MATCH($F, "open")
