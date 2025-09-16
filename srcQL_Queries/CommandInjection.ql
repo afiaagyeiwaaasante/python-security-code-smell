@@ -33,7 +33,7 @@ WHERE MATCH($F, "^(os\\.system|os\\.popen|subprocess\\.Popen|subprocess\\.call|s
 
 //V0078 - Find command strings built via concatenation for f-strings or .format detection
 FIND $S
-WHERE MATCH($S, "(?s)(f\\\".*\\{.+\\}.*\\\"|\\{\\}.format\\(|\\.format\\()"))
+WHERE MATCH($S, "(?s)(f\\\".*\\{.+\\}.*\\\"|\\{\\}.format\\(|\\.format\\())")
 
 
 // V0078 - Find command strings built via concatenation for concatenation with a variable-like token
