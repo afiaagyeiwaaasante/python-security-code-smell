@@ -15,7 +15,7 @@ WHERE MATCH ($S, "^(?i)(http://|ftp://|smtp://|telnet://)")
 // V0319 - Insecure network constructors (no encryption)
 FIND $F($S)
 WHERE MATCH ($F, "HTTPConnection|SMTP|FTP")
-        AND NOT ($F, "HTTPSConnection|SMTP_SSL|FTP_TLS")
+  AND NOT ($F, "HTTPSConnection|SMTP_SSL|FTP_TLS")
 
 // V0319 - Sensitive variables passed into insecure methods
 FIND $F($S)
