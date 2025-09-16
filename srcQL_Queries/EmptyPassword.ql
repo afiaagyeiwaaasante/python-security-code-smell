@@ -1,11 +1,11 @@
 // V0258 - CWE-258: Empty Password in Configuration for char ''
-FIND $D = $N
+FIND $D=$N
 WHERE MATCH ($D,"[^.!?]*(passwd|password|pwd|key|secret|token|auth)[^.!?]*[.!?]?") 
 UNION
 FIND $N =''
 
 // V0258 - CWE-258: Empty Password in Configuration for  string ""
-FIND $D = $N
+FIND $D=$N
 WHERE MATCH ($D,"[^.!?]*(passwd|password|pwd|key|secret|token|auth)[^.!?]*[.!?]?") 
 UNION
 FIND $N =""

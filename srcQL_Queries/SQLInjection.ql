@@ -1,20 +1,20 @@
 // V0089 - CWE-89: SQL Injection via concatenation
-FIND src:call $C;
-WHERE $C.get_target().get_name() MATCHES "execute|executemany"
-  AND $C CONTAINS src:binary_op[. = '+']
-RETURN $C;
+FIND $C(+)
+WHERE MATCH ($C, "execute|executemany")
+
+
+//Check for the injection for +, f-string, (make sure that the code is written clearly)
+//Check if the execution is a resultant of the input code not some injection
+//Check on program slicing 
+
 
 // V0089 - CWE-89: SQL Injection via f-string
-FIND src:call $C;
-WHERE $C.get_target().get_name() MATCHES "execute|executemany"
-  AND $C CONTAINS src:fstring
-RETURN $C;
+FIND $C()
+WHERE MATCH ($C, "execute|executemany")
 
 // V0089 - CWE-89: SQL Injection via str.format()
-FIND src:call $C;
-WHERE $C.get_target().get_name() MATCHES "execute|executemany"
-  AND $C CONTAINS src:call[src:name='format']
-RETURN $C;
+FIND $C;
+WHERE MATCH ($C, "execute|executemany")
 
 // V0089 - CWE-89: SQL Injection via % operator
 FIND src:call $C;

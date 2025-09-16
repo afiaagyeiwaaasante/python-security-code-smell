@@ -1,27 +1,25 @@
-// V0319 - CWE-319: Cleartext Transmission of Sensitive Information (HTTP)
-FIND //src:call/src:name[
-        .='requests.get' OR .='requests.post' OR .='requests.request'
-     ] CONTAINS src:argument/src:literal
-WHERE src:argument/src:literal MATCHES "^http://"
-RETURN $C;
+/*
+  CWE-319 : Cleartext Transmission of Sensitive Information 
+  The product transmits sensitive or security-critical data in cleartext 
+  in a communication channel that can be sniffed by unauthorized actors.
+*/
 
-// V0319 - CWE-319: Cleartext Transmission of Sensitive Information (FTP)
-FIND //src:call/src:name[.='ftplib.FTP']
-RETURN $C;
+// V0319 - CWE-319: Cleartext Transmission of Sensitive Information (HTTP, FTP, SMTP, Telnet)
+FIND $S 
+WHERE MATCH ($S, "^(?i)(http://|ftp://|smtp://|telnet://)")
 
-// V0319 - CWE-319: Cleartext Transmission of Sensitive Information (Telnet)
-FIND //src:call/src:name[.='telnetlib.Telnet']
-RETURN $C;
+// V0319 - API parameters with insecure URLS 
+FIND $F($S)
+WHERE MATCH ($S, "^(?i)(http://|ftp://|smtp://|telnet://)")
 
-// V0319 - CWE-319: Cleartext Transmission of Sensitive Information (socket)
-FIND //src:call/src:name[.='socket.connect'] CONTAINS src:argument/src:literal
-WHERE src:argument/src:literal MATCHES ".*:80$|.*:21$"
-RETURN $C;
+// V0319 - Insecure network constructors (no encryption)
+FIND $F($S)
+WHERE MATCH ($F, "HTTPConnection|SMTP|FTP")
+        AND NOT ($F, "HTTPSConnection|SMTP_SSL|FTP_TLS")
 
-// V0319 - CWE-319: Cleartext Transmission of Sensitive Information (sensitive variables)
-FIND //src:call/src:name[
-        .='requests.get' OR .='requests.post' OR .='requests.request' OR
-        .='socket.connect' OR .='ftplib.FTP' OR .='telnetlib.Telnet'
-     ] CONTAINS src:argument/src:name
-WHERE src:argument/src:name MATCHES "password|token|apikey|auth"
-RETURN $C;
+// V0319 - Sensitive variables passed into insecure methods
+FIND $F($S)
+WHERE MATCH ($S, "(?i)(password|passwd|token|secret|ssn|key)")
+  AND MATCH ($F, "HTTPConnection|SMTP|FTP|send|login")
+
+
