@@ -1,29 +1,25 @@
-// V0089 - CWE-89: SQL Injection via concatenation
-FIND $C(+)
-WHERE MATCH ($C, "execute|executemany")
+/*
+V0089 - CWE 89 - SQL Injection
+The software constructs all or part of an SQL command using 
+externally-influenced input from an upstream component, 
+but it does not neutralize or incorrectly neutralizes special 
+elements that could modify the intended SQL command.
+*/
 
+//V0089 - Detect raw SQL string literals
+FIND $S
+WHERE MATCH($S, "(?i)\\b(SELECT|INSERT INTO|UPDATE|DELETE FROM)\\b")
+
+//V0089 - Detect execute calls with SQL argument 
+FIND $F($Q)
+WHERE MATCH($F, "\\b(execute|executemany)\\b")
+  AND MATCH($Q, "(?i)(SELECT|INSERT INTO|UPDATE|DELETE FROM)")
+
+//V0089 - Detect SQL constructed via concatenation / formatting
+FIND $F($A)
+WHERE MATCH($F, "\\b(execute|executemany)\\b")
+  AND MATCH($A, "(\\+|%\\s*\\(|\\.format\\(|f\\\"|f\\')))")
 
 //Check for the injection for +, f-string, (make sure that the code is written clearly)
 //Check if the execution is a resultant of the input code not some injection
 //Check on program slicing 
-
-
-// V0089 - CWE-89: SQL Injection via f-string
-FIND $C()
-WHERE MATCH ($C, "execute|executemany")
-
-// V0089 - CWE-89: SQL Injection via str.format()
-FIND $C;
-WHERE MATCH ($C, "execute|executemany")
-
-// V0089 - CWE-89: SQL Injection via % operator
-FIND src:call $C;
-WHERE $C.get_target().get_name() MATCHES "execute|executemany"
-  AND $C CONTAINS src:binary_op[. = '%']
-RETURN $C;
-
-// V0089 - CWE-89: SQL Injection via variable argument
-FIND src:call $C;
-WHERE $C.get_target().get_name() MATCHES "execute|executemany"
-  AND $C CONTAINS src:argument[src:name]
-RETURN $C;
