@@ -1,27 +1,31 @@
-// V0502 - CWE-502: Deserialization of Untrusted Data (pickle)
-FIND //src:call/src:name[
-        src:name[1]='pickle' AND 
-        (src:name[2]='load' OR src:name[2]='loads')
-     ] CONTAINS src:argument[src:name OR src:expr]
-RETURN $C;
+/*
+V0502 - CWE-502: Deserialization of Untrusted Data 
+The application deserializes untrusted data without sufficiently
+verifying that the resulting data will be valid, potentially leading 
+to code execution or injection.
+*/
 
-// V0502 - CWE-502: Deserialization of Untrusted Data (cPickle)
-FIND //src:call/src:name[
-        src:name[1]='cPickle' AND 
-        (src:name[2]='load' OR src:name[2]='loads')
-     ] CONTAINS src:argument[src:name OR src:expr]
-RETURN $C;
+//V0502 - Pickle Deserialization
+FIND $F($A)
+WHERE MATCH($F, "pickle\\.load|pickle\\.loads|cPickle\\.load|cPickle\\.loads")
 
-// V0502 - CWE-502: Deserialization of Untrusted Data (yaml)
-FIND //src:call/src:name[
-        src:name[1]='yaml' AND src:name[2]='load'
-     ] CONTAINS src:argument[src:name OR src:expr]
-WHERE NOT $C CONTAINS src:call/src:name[.='safe_load']
-RETURN $C;
 
-// V0502 - CWE-502: Deserialization of Untrusted Data (marshal)
-FIND //src:call/src:name[
-        src:name[1]='marshal' AND 
-        (src:name[2]='load' OR src:name[2]='loads')
-     ] CONTAINS src:argument[src:name OR src:expr]
-RETURN $C;
+// V0502 - YAML Deserialization
+FIND $F($A)
+WHERE MATCH($F, "yaml\\.load")
+
+
+// V0502 - Marshall Deserialization
+FIND $F($A)
+WHERE MATCH($F, "marshal\\.load|marshal\\.loads")
+
+
+// V0502 - Shelve Usage 
+FIND $F($A)
+WHERE MATCH($F, "shelve\\.open")
+
+//V0502 - JSONPickle Usage 
+FIND $F($A)
+WHERE MATCH($F, "jsonpickle\\.decode")
+
+
