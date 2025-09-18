@@ -1,10 +1,12 @@
 import subprocess
 import os
+import csv
 from sklearn.metrics import precision_score, recall_score
 
 # Paths
 SRCQL_QUERY = "../srcQL_Queries/ClearTextTrans.ql"
 TEST_DIR = "../testsuite/CWE-319-ClearTextTransmission"
+RESULTS_CSV = "../results/eval_results.csv"
 
 def run_query_on_file(file_path):
     """Run srcQL query on a single file and return True if violation detected."""
@@ -50,3 +52,25 @@ if __name__ == "__main__":
     print("\nFile-level results:")
     for fname, label, detected in files:
         print(f"{fname} | True={label} | Pred={detected}")
+
+ # Save to CSV
+    os.makedirs(os.path.dirname(RESULTS_CSV), exist_ok=True)
+    with open(RESULTS_CSV, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["File", "TrueLabel", "Predicted"])
+        writer.writerows(files)
+        writer.writerow([])
+        writer.writerow(["Precision", precision])
+        writer.writerow(["Recall", recall])
+
+    # Save to CSV
+    os.makedirs(os.path.dirname(RESULTS_CSV), exist_ok=True)
+    with open(RESULTS_CSV, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["File", "TrueLabel", "Predicted"])
+        writer.writerows(files)
+        writer.writerow([])
+        writer.writerow(["Precision", precision])
+        writer.writerow(["Recall", recall])
+    
+    print(f"\nResults saved to {RESULTS_CSV}")
