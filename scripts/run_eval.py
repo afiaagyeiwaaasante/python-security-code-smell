@@ -4,7 +4,7 @@ from sklearn.metrics import precision_score, recall_score
 
 # Paths
 SRCQL_QUERY = "../srcQL_Queries/ClearTextTrans.ql"
-TEST_DIR = "../testsuite/CWE-319-CleartextTransmission"
+TEST_DIR = "../testsuite/CWE-319-ClearTextTransmission"
 
 def run_query_on_file(file_path):
     """Run srcQL query on a single file and return True if violation detected."""
@@ -19,7 +19,7 @@ def collect_labels():
     """Prepare ground truth labels and predictions."""
     y_true, y_pred, files = [], [], []
 
-    for label, folder in [(1, "positives"), (0, "negatives")]:
+    for label, folder in [(1, "positive"), (0, "negative")]:
         folder_path = os.path.join(TEST_DIR, folder)
         for fname in os.listdir(folder_path):
             if not fname.endswith(".py"):
